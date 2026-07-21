@@ -1,70 +1,113 @@
 #include <iostream>
-#include <cstring> //strlen, ... 사용하기 위해
-#include <limits>
-// C-style 문자열은 문자열의 마지막을 널문자로 나타냅니다. 
-// 이를 이용하여 문자열의 길이를 구할 수 있습니다. 문자열의 길이를 구하는 함수를 만들어서 C-style 문자열 라이브러리에 있는 strlen함수와 동일한 결과를 나타내는지 확인해봅니다. 
-// 그리고 문자열 2개를 공백을 하나 넣어서 콘솔창에 출력하는 함수를 
-// cstring 라이브러리에 있는 함수를 이용하여 만들고 호출해봅니다. 
+#include <cstdlib>
+#include <ctime>
 
-// 1. 함수 정의
-// 1-1. myStrlen: 리턴은 int형, 매개변수는 const 문자열매개변수 1개
-//     문자열 매개변수의 길이를 리턴합니다. 
-int myStrlen(const char str[])
+// 1. 열거형 studentName 정의: kim, lee, park, numOfStudents
+//    printStudentName 함수 정의: 리턴은 없고, 매개변수는 studentName형 1개
+//    매개변수에 따라
+//    kim은 KIM, 을 출력
+//    lee는 LEE, 를 출력
+//    park은 PARK, 를 출력
+//    kim, lee, park이 아니면 NO NAME, 을 출력
+
+enum studentName
 {
-    int len{0};
-    while (str[len] != '\0') len++;
-    return len;
+    kim,
+    lee,
+    park,
+    numOfStudents
+};
+
+void printStudentName(studentName name)
+{
+    switch (name)
+    {
+    case kim:
+        std::cout << "KIM";
+        break;
+    case lee:
+        std::cout << "LEE";
+        break;
+    case park:
+        std::cout << "PARK";
+        break;
+    default:
+        std::cout << "NO NAME";
+        break;
+    }
 }
-// 1-2. pasteOneSpace: 리턴은 없고, const 문자배열매개변수 2개
-// 문자열을 하나 선언하고 
-// 매개변수 문자열 2개 사이는 한 칸을 띄워서 붙여준 값을 
-// 선언한 문자열에 넣어준 후 콘솔창으로 출력합니다 (strcpy, strcat함수 이용). 
-void pasteOneSpace(const char s1[], const char s2[])
-{
-    char s[100];
-    strcpy(s,s1);
-    strcat(s," ");
-    strcat(s, s2);
-    std::cout << s << std::endl;
 
+// 2. 구조체 student 정의
+// 2-1. student 구조체는 studentName형 name, int형 id, int형 score, char형 grade를 멤버로 갖습니다.
+// 2-2. name은 kim, id는 3741200, score는 0, grade는 'F'로 디폴트값을 지정합니다.
+struct student
+{
+    studentName name{kim};
+    int id{3741200};
+    int score{0};
+    char grade{'F'};
+};
+
+// 3-1. score2grade: 리턴 없음, 매개변수는 const int형 참조, char형 참조 (총 2개),
+//      int형 매개변수 값 (90이상,80이상,70이상,60이상,그외)에 따라 char형에 ('A','B','C','D','F')값을 할당
+void score2grade(const int& score, char& grade)
+{
+    if (score >= 90)
+    {
+        grade = 'A';
+    }
+    else if (score >= 80)
+    {
+        grade = 'B';
+    }
+    else if (score >= 70)
+    {
+        grade = 'C';
+    }
+    else if (score >= 60)
+    {
+        grade = 'D';
+    }
+    else
+    {
+        grade = 'F';
+    }
 }
 
-int main() 
+// 3-2. inputStudent: 리턴은 없고, 매개변수는 student형 참조,
+//      student의 name은 rand()함수로 값을 넣고, student의 id, score를 입력받고,
+//      student의 grade는 3-1함수를 사용
+void inputStudent(student& s)
 {
-    // 2-0. 본인 분반, 본인 이름 그리고 학번을 순서대로 출력합니다. 
-    // 분반이 00분반, 이름이 Kim Programming, 학번이 3741200이라면, 00 Kim Programming 3741200
-    std::cout << "01 Park Chaerin 2693128\n";
-    // 2-1. C-style 문자열 1개를 선언하고 원하는 문자열로 초기화합니다.
-    // 크기 선언은 생략합니다. 
-    // 선언한 문자열을 콘솔창으로 출력합니다. 
-    // 인자로 선언한 문자열을 넣은 myStrlen함수의 리턴값을 콘솔창으로 출력합니다. 
-    // 인자로 선언한 문자열을 넣은 strlen함수의 리턴값을 콘솔창으로 출력합니다. 
-    // 그리고 이 둘의 값이 같으면 Good job!을 콘솔창으로 출력합니다. 
-    char str[]{"Hi"};
-    std::cout << myStrlen(str) << std::endl;
-    std::cout << strlen(str) << std::endl;
-    if (myStrlen(str) == strlen(str)) std::cout << "Good job!\n";
-    // 2-2. 문자열 2개를 선언하고 
-    // std::cin.getline을 이용해 콘솔창으로 한줄씩 원하는 문자열을 넣어줍니다. 
-    // strcmp함수를 이용해 문자열 2개가 같으면 "same"을, 같지 않으면 "not same"을 콘솔창으로 출력합니다.
-    // 인자로 문자열 2개를 넣어서 pasteOneSpace 함수를 호출합니다. 
-    char s1[30], s2[30];
-    std::cout << "Enter a line: ";
-    std::cin.getline(s1, 30);
-    std::cout << "Enter another line: ";
-    std::cin.getline(s2, 30);
-    if(!strcmp(s1, s2)) std::cout << "same\n";
-    else std::cout << "not same\n";
+    s.name = static_cast<studentName>(rand() % numOfStudents);
+    std::cout << "id: ";
+    std::cin >> s.id;
+    std::cout << "score: ";
+    std::cin >> s.score;
+    score2grade(s.score, s.grade);
+}
 
-    //if (s1 == s2)//&s1[0] == &s2[0]
-    // std::cout << s1 << std::endl;
-    // if (!std::cin)
-    // {
-    //     std::cin.clear();
-    //     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    // } 
-    //std::cout << s2 << std::endl;
-    // 인자로 문자열 2개를 넣어서 pasteOneSpace 함수를 호출합니다. 
-    pasteOneSpace(s1, s2);
+// 3-3. printStudent: 리턴은 없고, 매개변수는 const student형 참조,
+//      name, id: score(grade) 형식으로 출력, name은 printStudentName 함수 이용
+void printStudent(const student& s)
+{
+    printStudentName(s.name);
+    std::cout << ", " << s.id << ":" << s.score << "(" << s.grade << ")" << std::endl;
+}
+
+int main()
+{
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    student s1;
+    inputStudent(s1);
+    printStudent(s1);
+
+    student s2;
+    printStudent(s2);
+
+    student s3 = {park, 2693128, 100, 'A'};
+    printStudent(s3);
+
     return 0;
 }
